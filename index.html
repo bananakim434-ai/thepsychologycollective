@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Psychology Collective</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0F1117;--bg2:#13161F;--bg3:#181C27;
+  --surface:rgba(255,255,255,0.03);--surface2:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.15);
+  --text:#ECF0F8;--text2:#9BA8C4;--text3:#5A6480;
+  --accent:#4A6CF7;--accent2:#7B9BFF;
+  --accent-soft:rgba(74,108,247,0.12);--accent-glow:rgba(74,108,247,0.22);
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+}
+html,body{min-height:100vh}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.45}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:rgba(15,17,23,0.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:0 3rem;display:flex;align-items:center;justify-content:space-between;height:60px;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer}
+.logo-mark{width:27px;height:27px;border-radius:50%;border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:.9rem;color:var(--accent);line-height:1;flex-shrink:0;box-shadow:0 0 14px var(--accent-glow)}
+.logo-name{font-size:.82rem;font-weight:500;color:var(--text);letter-spacing:.02em}
+.nav-links{display:flex;align-items:center}
+.nav-link{font-size:.78rem;font-weight:400;color:var(--text2);cursor:pointer;padding:.35rem 1rem;border-radius:2px;transition:color .18s;background:none;border:none;font-family:var(--sans);letter-spacing:.01em}
+.nav-link:hover{color:var(--text)}
+.nav-link.active{color:var(--accent2)}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.nav-apply{font-size:.72rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:7px 18px;border:1px solid var(--border2);border-radius:3px;color:var(--text2);cursor:pointer;background:var(--surface2);font-family:var(--sans);transition:all .2s;text-decoration:none;display:inline-block}
+.nav-apply:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;cursor:pointer;background:none;border:none;padding:4px;width:32px;height:32px}
+.hamburger span{display:block;height:1.5px;background:var(--text2);border-radius:1px;transition:all .25s}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* MOBILE MENU */
+.mobile-menu{display:none;position:fixed;top:60px;left:0;right:0;bottom:0;background:rgba(13,15,21,0.98);backdrop-filter:blur(20px);z-index:190;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;border-top:1px solid var(--border)}
+.mobile-menu.open{display:flex}
+.mob-link{font-family:var(--serif);font-size:2.2rem;font-weight:300;color:var(--text);cursor:pointer;background:none;border:none;transition:color .2s}
+.mob-link:hover{color:var(--accent2)}
+.mob-apply{font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:12px 32px;background:var(--accent);color:#fff;border:none;border-radius:3px;cursor:pointer;font-family:var(--sans);text-decoration:none;margin-top:1rem;box-shadow:0 4px 20px var(--accent-glow)}
+
+/* PAGES */
+.page{display:none;flex:1;flex-direction:column;position:relative;z-index:1}
+.page.active{display:flex;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* SHARED */
+.wrap{max-width:1060px;margin:0 auto;width:100%;padding:0 3rem}
+.page-top{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border);max-width:1060px;margin:0 auto;width:100%}
+.page-label{font-size:.65rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);margin-bottom:.9rem;display:flex;align-items:center;gap:.8rem}
+.page-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.page-title{font-family:var(--serif);font-size:clamp(2.2rem,4.5vw,3.5rem);font-weight:300;line-height:1.08;color:var(--text)}
+.page-title em{font-style:italic;color:var(--accent2)}
+.sec-label{font-size:.62rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:1rem;margin-bottom:1.8rem}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* BUTTONS */
+.btn-solid{font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:11px 26px;background:var(--accent);color:#fff;border:none;border-radius:3px;cursor:pointer;font-family:var(--sans);transition:all .2s;box-shadow:0 4px 20px var(--accent-glow);text-decoration:none;display:inline-block}
+.btn-solid:hover{background:var(--accent2);box-shadow:0 6px 28px rgba(74,108,247,.38);transform:translateY(-1px)}
+.btn-line{font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:10px 26px;border:1px solid var(--border2);color:var(--text2);background:var(--surface2);border-radius:3px;cursor:pointer;font-family:var(--sans);transition:all .2s;text-decoration:none;display:inline-block}
+.btn-line:hover{border-color:var(--border2);color:var(--text);background:rgba(255,255,255,.08)}
+
+/* ═══ HOME ═══ */
+.home-hero{padding:7rem 3rem 5.5rem;border-bottom:1px solid var(--border);text-align:center;position:relative;overflow:hidden;min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.hero-grid{position:absolute;inset:0;background-image:radial-gradient(circle at center,rgba(74,108,247,.07) 0%,transparent 65%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M 80 0 L 0 0 0 80' fill='none' stroke='rgba(74,108,247,0.04)' stroke-width='0.5'/%3E%3C/svg%3E");background-size:100% 100%,80px 80px;pointer-events:none}
+.hero-orbital{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;border-radius:50%;border:1px solid rgba(74,108,247,.06);pointer-events:none}
+.hero-orbital::before{content:'';position:absolute;inset:60px;border-radius:50%;border:1px solid rgba(74,108,247,.045)}
+.hero-orbital::after{content:'';position:absolute;inset:140px;border-radius:50%;border:1px solid rgba(74,108,247,.035)}
+.hero-psi{font-family:var(--serif);font-size:2.8rem;font-weight:300;color:var(--accent);display:block;margin-bottom:1.8rem;line-height:1;text-shadow:0 0 40px var(--accent-glow);position:relative}
+.hero-title{font-family:var(--serif);font-size:clamp(4rem,9vw,8rem);font-weight:300;line-height:.93;letter-spacing:-.03em;color:var(--text);margin-bottom:.3rem;position:relative}
+.hero-title em{font-style:italic;color:var(--accent2)}
+.hero-sub{font-size:1rem;font-weight:300;color:var(--text2);line-height:1.78;max-width:500px;margin:2rem auto 2.5rem;position:relative}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:4.5rem;position:relative}
+.hero-stats{display:inline-flex;gap:4rem;border-top:1px solid var(--border);padding-top:2.5rem;position:relative}
+.stat-n{font-family:var(--serif);font-size:2.2rem;font-weight:300;color:var(--text);display:block;line-height:1;margin-bottom:4px}
+.stat-l{font-size:.66rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
+
+/* Featured publication */
+.home-featured{padding:4rem 3rem;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);position:relative;overflow:hidden}
+.home-featured::before{content:'';position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-glow),transparent)}
+.featured-wrap{max-width:1060px;margin:0 auto}
+.featured-label{font-size:.62rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem}
+.featured-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.featured-inner{display:grid;grid-template-columns:240px 1fr 240px;gap:2rem;align-items:stretch}
+
+/* Issue cover */
+.issue-cover{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:2rem 1.8rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;min-height:300px;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(74,108,247,.06);flex-shrink:0}
+.ic-grid{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='rgba(74,108,247,0.06)' stroke-width='0.5'/%3E%3C/svg%3E");background-size:40px 40px;pointer-events:none}
+.ic-glow{position:absolute;bottom:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(74,108,247,.15),transparent 70%);pointer-events:none}
+.ic-top{position:relative;z-index:1}
+.ic-org{font-size:.55rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.4rem;display:block}
+.ic-psi{font-family:var(--serif);font-size:1.6rem;color:rgba(74,108,247,.5);line-height:1;display:block}
+.ic-bottom{position:relative;z-index:1}
+.ic-num{font-family:var(--serif);font-size:5rem;font-weight:300;color:rgba(74,108,247,.08);line-height:1;display:block;margin-bottom:.8rem}
+.ic-line{width:28px;height:1.5px;background:var(--accent);margin-bottom:.9rem;border-radius:1px}
+.ic-title{font-family:var(--serif);font-size:1.1rem;font-weight:400;font-style:italic;color:rgba(255,255,255,.75);line-height:1.4;margin-bottom:.5rem}
+.ic-date{font-size:.58rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25)}
+
+/* Featured main card */
+.featured-main{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:2.5rem;position:relative;overflow:hidden;transition:border-color .25s,box-shadow .25s}
+.featured-main::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(74,108,247,.4),transparent)}
+.f-badge{display:inline-flex;align-items:center;gap:6px;font-size:.6rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);background:var(--accent-soft);border:1px solid rgba(74,108,247,.2);padding:4px 10px;border-radius:100px;margin-bottom:2rem}
+.f-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.f-issue{font-size:.62rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);margin-bottom:.5rem;display:block}
+.f-title{font-family:var(--serif);font-size:2rem;font-weight:300;color:var(--text);line-height:1.12;margin-bottom:.5rem}
+.f-title em{font-style:italic;color:var(--accent2)}
+.f-date{font-size:.78rem;color:var(--text3);margin-bottom:1.2rem}
+.f-body{font-size:.9rem;font-weight:300;color:var(--text2);line-height:1.85;margin-bottom:2rem}
+.f-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:1.2rem;flex-wrap:wrap;gap:.8rem}
+.f-meta{font-size:.76rem;color:var(--text3)}
+.featured-sidebar{display:flex;flex-direction:column;gap:1.2rem;flex-shrink:0}
+.fs-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:1.8rem;flex:1;transition:border-color .2s}
+.fs-card:hover{border-color:var(--border2)}
+.fs-label{font-size:.6rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);margin-bottom:.8rem;display:block}
+.fs-num{font-family:var(--serif);font-size:3rem;font-weight:300;color:var(--border);line-height:1;margin-bottom:.5rem}
+.fs-title{font-family:var(--serif);font-size:.95rem;font-weight:400;font-style:italic;color:var(--text2);margin-bottom:.3rem}
+.fs-date{font-size:.72rem;color:var(--text3)}
+.fs-stat{background:linear-gradient(135deg,rgba(74,108,247,.14),rgba(74,108,247,.04));border:1px solid rgba(74,108,247,.14)}
+.fs-big{font-family:var(--serif);font-size:2.4rem;font-weight:300;color:var(--accent2);display:block;line-height:1;margin-bottom:.3rem}
+.fs-sub{font-size:.8rem;font-weight:300;color:var(--text2);line-height:1.55}
+
+/* Home cards */
+.home-cards{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)}
+.home-card{padding:2.2rem 1.8rem;border-right:1px solid var(--border);cursor:pointer;transition:background .2s;display:flex;flex-direction:column;justify-content:space-between;min-height:170px}
+.home-card:last-child{border-right:none}
+.home-card:hover{background:var(--surface2)}
+.hc-n{font-family:var(--serif);font-size:.78rem;color:var(--text3);display:block;margin-bottom:1.2rem}
+.hc-title{font-family:var(--serif);font-size:1.2rem;font-weight:400;color:var(--text);line-height:1.2;margin-bottom:.4rem}
+.hc-sub{font-size:.8rem;font-weight:300;color:var(--text2);line-height:1.68;flex:1}
+.hc-arrow{font-size:.7rem;font-weight:500;color:var(--accent2);margin-top:1.2rem;display:block;letter-spacing:.04em;transition:letter-spacing .2s}
+.home-card:hover .hc-arrow{letter-spacing:.09em}
+.home-about{padding:5rem 3rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+.ha-label{font-size:.62rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);margin-bottom:.9rem}
+.ha-h{font-family:var(--serif);font-size:clamp(1.7rem,2.8vw,2.4rem);font-weight:300;line-height:1.18;color:var(--text);margin-bottom:1.2rem}
+.ha-h em{font-style:italic;color:var(--accent2)}
+.ha-p{font-size:.92rem;font-weight:300;color:var(--text2);line-height:1.85}
+.ha-pillars{display:flex;flex-direction:column;gap:2px;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.ha-pillar{padding:1.3rem 1.5rem;border-bottom:1px solid var(--border);display:flex;gap:1.2rem;align-items:flex-start;transition:background .2s;background:var(--bg2)}
+.ha-pillar:last-child{border-bottom:none}
+.ha-pillar:hover{background:var(--bg3)}
+.ha-pn{font-family:var(--serif);font-size:.75rem;color:var(--text3);flex-shrink:0;padding-top:3px}
+.ha-ptitle{font-family:var(--serif);font-size:1rem;font-weight:400;color:var(--text);margin-bottom:.25rem}
+.ha-pbody{font-size:.8rem;font-weight:300;color:var(--text2);line-height:1.65}
+.home-sf{padding:2.8rem 3rem;border-bottom:1px solid var(--border)}
+.tags{display:flex;flex-wrap:wrap;gap:7px;max-width:1060px;margin:0 auto}
+.tag{font-size:.74rem;font-weight:400;padding:6px 13px;border:1px solid var(--border);border-radius:3px;color:var(--text2);background:var(--surface);transition:all .18s;cursor:default}
+.tag:hover{border-color:rgba(74,108,247,.3);color:var(--accent2);background:var(--accent-soft)}
+
+/* ═══ ABOUT ═══ */
+.about-grid{padding:3.5rem 3rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:5rem;max-width:1060px;margin:0 auto}
+.about-p{font-size:.94rem;font-weight:300;color:var(--text2);line-height:1.88;margin-bottom:1rem}
+.blockq{border-left:1.5px solid var(--accent);padding:.8rem 0 .8rem 1.6rem;margin-top:2rem}
+.blockq p{font-family:var(--serif);font-size:1.12rem;font-weight:400;font-style:italic;color:#A8B8D8;line-height:1.55}
+.facts{border-top:1px solid var(--border)}
+.fact{display:flex;gap:1.3rem;padding:1.2rem 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.fact-n{font-family:var(--serif);font-size:1.85rem;font-weight:300;color:var(--accent2);flex-shrink:0;min-width:54px;line-height:1;padding-top:2px}
+.fact-t{font-size:.84rem;font-weight:300;color:var(--text2);line-height:1.68}
+.about-divs{padding:3rem 3rem;border-bottom:1px solid var(--border);max-width:1060px;margin:0 auto}
+.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:1.8rem}
+.pillar{background:var(--bg2);padding:2rem 1.8rem;transition:background .2s;position:relative}
+.pillar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity .25s}
+.pillar:hover{background:var(--bg3)}
+.pillar:hover::after{opacity:1}
+.p-n{font-size:.6rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);display:block;margin-bottom:1.5rem}
+.p-title{font-family:var(--serif);font-size:1.25rem;font-weight:400;color:var(--text);margin-bottom:.6rem}
+.p-body{font-size:.85rem;font-weight:300;color:var(--text2);line-height:1.78}
+.p-list{list-style:none;margin-top:1rem;font-size:.78rem;color:var(--text3)}
+.p-list li{padding:4px 0;border-top:1px solid var(--border);padding-left:.85rem;position:relative}
+.p-list li::before{content:'–';position:absolute;left:0;color:var(--accent)}
+.about-cycle{padding:3rem 3rem 4.5rem;max-width:1060px;margin:0 auto}
+.cycle-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:1.8rem}
+.c-step{background:var(--bg2);padding:1.8rem 1.3rem;transition:background .2s}
+.c-step:hover{background:var(--bg3)}
+.c-wk{font-size:.6rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--accent2);display:block;margin-bottom:.8rem}
+.c-title{font-family:var(--serif);font-size:.95rem;font-weight:400;color:var(--text);margin-bottom:.3rem}
+.c-body{font-size:.76rem;font-weight:300;color:var(--text3);line-height:1.58}
+
+/* ═══ PUBLICATIONS ═══ */
+.pub-intro{padding:2.5rem 3rem 3rem;border-bottom:1px solid var(--border);max-width:1060px;margin:0 auto}
+.pub-intro-p{font-size:.94rem;font-weight:300;color:var(--text2);line-height:1.85;max-width:620px}
+.pub-issues{padding:3rem 3rem;max-width:1060px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem}
+.pub-card{border:1px solid var(--border);border-radius:6px;background:var(--bg2);display:grid;grid-template-columns:140px 1fr;overflow:hidden;transition:border-color .25s,box-shadow .25s,transform .25s;position:relative;cursor:pointer}
+.pub-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(74,108,247,.3),transparent);opacity:0;transition:opacity .3s}
+.pub-card:hover{border-color:rgba(74,108,247,.22);box-shadow:0 8px 48px rgba(0,0,0,.5),0 0 0 1px rgba(74,108,247,.05);transform:translateY(-1px)}
+.pub-card:hover::before{opacity:1}
+.pub-spine{background:var(--bg3);border-right:1px solid var(--border);padding:2rem 1.5rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.pub-spine::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(74,108,247,.04),transparent)}
+.pub-status{display:inline-block;font-size:.58rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:100px;margin-bottom:1.2rem}
+.s-progress{background:rgba(74,108,247,.12);color:var(--accent2);border:1px solid rgba(74,108,247,.2)}
+.s-planned{background:var(--surface);color:var(--text3);border:1px solid var(--border)}
+.pub-spine-n{font-size:.58rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:.3rem}
+.pub-big-n{font-family:var(--serif);font-size:3.5rem;font-weight:300;color:var(--border);line-height:1}
+.pub-body{padding:2rem 2.2rem}
+.pub-title{font-family:var(--serif);font-size:1.65rem;font-weight:300;color:var(--text);line-height:1.2;margin-bottom:.4rem}
+.pub-title em{font-style:italic;color:var(--accent2)}
+.pub-date{font-size:.76rem;color:var(--text3);margin-bottom:1.1rem}
+.pub-desc{font-size:.88rem;font-weight:300;color:var(--text2);line-height:1.82;margin-bottom:1.3rem}
+.pub-detail{font-size:.75rem;color:var(--text3);display:flex;align-items:center;gap:.5rem}
+.pub-detail::before{content:'';width:12px;height:1px;background:var(--text3)}
+.pub-note{padding:2.5rem 3rem 5rem;max-width:1060px;margin:0 auto}
+.pub-note p{font-size:.9rem;font-weight:300;color:var(--text2);line-height:1.82;max-width:580px}
+
+/* ═══ ISSUE PAGE ═══ */
+.issue-hero{padding:5rem 3rem 4rem;border-bottom:1px solid var(--border);background:var(--bg2);position:relative;overflow:hidden}
+.issue-hero::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M 80 0 L 0 0 0 80' fill='none' stroke='rgba(74,108,247,0.04)' stroke-width='0.5'/%3E%3C/svg%3E");background-size:80px 80px;pointer-events:none}
+.issue-hero-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr 180px;gap:4rem;align-items:start;position:relative;z-index:1}
+.ih-back{display:inline-flex;align-items:center;gap:.5rem;font-size:.7rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);cursor:pointer;background:none;border:none;font-family:var(--sans);margin-bottom:2rem;transition:color .2s;padding:0}
+.ih-back:hover{color:var(--accent2)}
+.ih-label{font-size:.65rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);margin-bottom:.8rem;display:block}
+.ih-title{font-family:var(--serif);font-size:clamp(2.5rem,5vw,4rem);font-weight:300;line-height:1.05;color:var(--text);margin-bottom:1rem}
+.ih-title em{font-style:italic}
+.ih-meta{font-size:.8rem;color:var(--text3);margin-bottom:2rem;display:flex;gap:1.5rem;flex-wrap:wrap}
+.ih-meta span{display:flex;align-items:center;gap:.4rem}
+.ih-meta span::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.ih-btns{display:flex;gap:1rem;flex-wrap:wrap}
+.ih-cover{width:150px;aspect-ratio:3/4;background:var(--bg3);border:1px solid var(--border);border-radius:4px;display:flex;flex-direction:column;justify-content:space-between;padding:1.2rem 1rem;position:relative;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.5);flex-shrink:0}
+.ih-cover-grid{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M 30 0 L 0 0 0 30' fill='none' stroke='rgba(74,108,247,0.07)' stroke-width='0.5'/%3E%3C/svg%3E");background-size:30px 30px}
+.ih-ct{position:relative;z-index:1}
+.ih-cb{position:relative;z-index:1}
+.ih-cover-org{font-size:.45rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);display:block;margin-bottom:.3rem}
+.ih-cover-psi{font-family:var(--serif);font-size:1.1rem;color:rgba(74,108,247,.5)}
+.ih-cover-num{font-family:var(--serif);font-size:3rem;font-weight:300;color:rgba(74,108,247,.07);line-height:1;display:block;margin-bottom:.4rem}
+.ih-cover-line{width:18px;height:1px;background:var(--accent);margin-bottom:.5rem;border-radius:1px}
+.ih-cover-title{font-family:var(--serif);font-size:.7rem;font-weight:400;font-style:italic;color:rgba(255,255,255,.65);line-height:1.4}
+.ih-cover-date{font-size:.45rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-top:.4rem;display:block}
+.issue-section{padding:3rem 3rem;border-bottom:1px solid var(--border);max-width:1060px;margin:0 auto}
+.is-h{font-family:var(--serif);font-size:1.5rem;font-weight:400;color:var(--text);margin-bottom:1.5rem}
+.founders-note{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:2.5rem;position:relative;overflow:hidden}
+.founders-note::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(74,108,247,.3),transparent)}
+.fn-quote{font-family:var(--serif);font-size:1.3rem;font-weight:300;font-style:italic;color:var(--text);line-height:1.6;margin-bottom:1.5rem}
+.fn-body{font-size:.9rem;font-weight:300;color:var(--text2);line-height:1.85}
+.fn-sig{margin-top:2rem;padding-top:1.2rem;border-top:1px solid var(--border);font-size:.78rem;color:var(--text3)}
+.fn-name{display:block;font-family:var(--serif);font-size:1rem;font-weight:400;color:var(--text);margin-bottom:.1rem}
+.contrib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:1.5rem}
+.contrib-card{background:var(--bg2);padding:1.3rem;transition:background .18s;position:relative}
+.contrib-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:1.5px;background:var(--accent);opacity:0;transition:opacity .2s}
+.contrib-card:hover{background:var(--bg3)}
+.contrib-card:hover::after{opacity:1}
+.cc-init{width:34px;height:34px;border-radius:6px;background:var(--accent-soft);border:1px solid rgba(74,108,247,.18);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:500;color:var(--accent2);margin-bottom:.7rem}
+.cc-name{font-size:.83rem;font-weight:500;color:var(--text);margin-bottom:2px}
+.cc-country{font-size:.7rem;color:var(--text3);margin-bottom:4px}
+.cc-field{font-size:.68rem;color:var(--accent2)}
+.article-list{display:flex;flex-direction:column;gap:2px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:1.5rem}
+.article-row{background:var(--bg2);padding:1.5rem 1.8rem;display:flex;align-items:flex-start;gap:2rem;transition:background .2s}
+.article-row:hover{background:var(--bg3)}
+.ar-num{font-family:var(--serif);font-size:.85rem;color:var(--text3);flex-shrink:0;min-width:28px;padding-top:2px}
+.ar-main{flex:1}
+.ar-title{font-family:var(--serif);font-size:1.1rem;font-weight:400;color:var(--text);margin-bottom:.25rem;line-height:1.3}
+.ar-title em{font-style:italic}
+.ar-meta{font-size:.75rem;color:var(--text3)}
+.ar-status{font-size:.6rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:100px;flex-shrink:0;align-self:center}
+.pill-progress{background:rgba(74,108,247,.12);color:var(--accent2);border:1px solid rgba(74,108,247,.2)}
+.pill-planned{background:var(--surface);color:var(--text3);border:1px solid var(--border)}
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem}
+.insight-card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;transition:border-color .2s}
+.insight-card:hover{border-color:var(--border2)}
+.ins-region{font-size:.62rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:.6rem;display:block}
+.ins-body{font-size:.82rem;font-weight:300;color:var(--text2);line-height:1.68}
+
+/* ═══ MEMBERS ═══ */
+.members-intro{padding:3rem 3rem 3.5rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:5rem;max-width:1060px;margin:0 auto}
+.mi-p{font-size:.94rem;font-weight:300;color:var(--text2);line-height:1.88}
+.mi-note{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:1.5rem;font-size:.84rem;font-weight:300;color:var(--text2);line-height:1.78}
+.mi-note strong{display:block;font-size:.62rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:.6rem}
+.members-grid-wrap{padding:3rem 3rem 4.5rem;max-width:1060px;margin:0 auto}
+.m-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.mc{background:var(--bg2);padding:1.6rem;transition:background .18s;position:relative}
+.mc::after{content:'';position:absolute;left:0;top:0;bottom:0;width:1.5px;background:var(--accent);opacity:0;transition:opacity .2s}
+.mc:hover{background:var(--bg3)}
+.mc:hover::after{opacity:1}
+.mc-init{width:36px;height:36px;border-radius:6px;background:rgba(74,108,247,.1);border:1px solid rgba(74,108,247,.18);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:500;color:var(--accent2);margin-bottom:.9rem}
+.mc-name{font-size:.85rem;font-weight:500;color:var(--text);margin-bottom:2px}
+.mc-country{font-size:.72rem;color:var(--text3);margin-bottom:5px}
+.mc-field{font-size:.7rem;color:var(--accent2)}
+.mc-more{display:flex;align-items:center;justify-content:center;background:var(--surface)}
+.mc-more p{font-family:var(--serif);font-size:.88rem;font-style:italic;color:var(--text3);text-align:center;line-height:1.65}
+
+/* ═══ APPLY ═══ */
+.apply-hero{padding:6rem 3rem 5rem;border-bottom:1px solid var(--border);text-align:center;position:relative;overflow:hidden;background:var(--bg2)}
+.apply-hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(74,108,247,.08) 0%,transparent 65%);pointer-events:none}
+.apply-psi{font-family:var(--serif);font-size:2.2rem;font-weight:300;color:rgba(74,108,247,.2);display:block;margin-bottom:1.5rem;position:relative}
+.apply-h{font-family:var(--serif);font-size:clamp(2.5rem,5vw,3.8rem);font-weight:300;line-height:1.08;color:var(--text);margin-bottom:1rem;position:relative}
+.apply-h em{font-style:italic;color:var(--accent2)}
+.apply-sub{font-size:1rem;font-weight:300;color:var(--text2);line-height:1.82;max-width:520px;margin:0 auto 2.5rem;position:relative}
+.apply-btn{display:inline-block;font-size:.72rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;padding:12px 30px;background:var(--accent);color:#fff;border:none;border-radius:3px;cursor:pointer;font-family:var(--sans);transition:all .2s;box-shadow:0 4px 20px var(--accent-glow);position:relative;text-decoration:none}
+.apply-btn:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 6px 28px rgba(74,108,247,.38)}
+.apply-note{margin-top:1.2rem;font-size:.72rem;color:var(--text3);position:relative}
+.apply-body{padding:4rem 3rem;max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;border-bottom:1px solid var(--border)}
+.apply-h2{font-family:var(--serif);font-size:1.35rem;font-weight:400;color:var(--text);margin-bottom:1.2rem}
+.apply-p{font-size:.9rem;font-weight:300;color:var(--text2);line-height:1.85;margin-bottom:.8rem}
+.apply-list{list-style:none;font-size:.87rem;font-weight:300;color:var(--text2)}
+.apply-list li{padding:.85rem 0;border-bottom:1px solid var(--border);display:flex;gap:.8rem;align-items:flex-start}
+.apply-list li:first-child{border-top:1px solid var(--border)}
+.apply-list li::before{content:'→';color:var(--accent);font-size:.72rem;flex-shrink:0;padding-top:2px}
+.apply-faq{padding:3.5rem 3rem 5.5rem;max-width:1060px;margin:0 auto}
+.faq-item{padding:1.4rem 0;border-bottom:1px solid var(--border)}
+.faq-q{font-family:var(--serif);font-size:1.02rem;font-weight:400;color:var(--text);margin-bottom:.45rem}
+.faq-a{font-size:.85rem;font-weight:300;color:var(--text2);line-height:1.75}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:2rem 3rem;flex-shrink:0;position:relative;z-index:1}
+.foot-inner{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.2rem}
+.foot-brand{display:flex;align-items:center;gap:8px}
+.foot-mark{width:20px;height:20px;border-radius:50%;border:1px solid rgba(74,108,247,.3);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:.72rem;color:rgba(74,108,247,.5)}
+.foot-name{font-size:.76rem;color:var(--text3)}
+.foot-links{display:flex;gap:1.8rem;flex-wrap:wrap}
+.foot-links a{font-size:.74rem;color:var(--text3);text-decoration:none;cursor:pointer;transition:color .2s;background:none;border:none;font-family:var(--sans)}
+.foot-links a:hover{color:var(--text2)}
+.foot-copy{font-size:.66rem;color:var(--text3);max-width:1060px;margin:.8rem auto 0;opacity:.45}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  nav,footer{padding-left:1.2rem;padding-right:1.2rem}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .home-hero,.home-featured,.home-about,.home-sf,.home-cards,
+  .about-grid,.about-divs,.about-cycle,.pub-intro,.pub-issues,.pub-note,
+  .members-intro,.members-grid-wrap,.apply-hero,.apply-body,.apply-faq,
+  .page-top,.issue-hero,.issue-section{padding-left:1.2rem;padding-right:1.2rem}
+  .featured-inner{grid-template-columns:1fr}
+  .issue-cover,.ih-cover{display:none}
+  .home-about,.about-grid,.members-intro,.apply-body,.issue-hero-inner{grid-template-columns:1fr;gap:2rem}
+  .home-cards,.pillars-grid,.cycle-grid,.m-grid,.contrib-grid,.insight-grid{grid-template-columns:1fr 1fr}
+  .pub-card{grid-template-columns:1fr}
+  .pub-spine{border-right:none;border-bottom:1px solid var(--border)}
+  .hero-stats{gap:2rem;flex-wrap:wrap}
+}
+@media(max-width:500px){
+  .home-cards,.pillars-grid,.cycle-grid,.m-grid,.contrib-grid,.insight-grid{grid-template-columns:1fr}
+  .hero-title{font-size:3.2rem}
+  .hero-stats{flex-direction:column;gap:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="goTo('home')">
+    <div class="logo-mark">ψ</div>
+    <span class="logo-name">The Psychology Collective</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" data-page="home" onclick="goTo('home')">Home</button>
+    <button class="nav-link" data-page="about" onclick="goTo('about')">About</button>
+    <button class="nav-link" data-page="publications" onclick="goTo('publications')">Publications</button>
+    <button class="nav-link" data-page="members" onclick="goTo('members')">Members</button>
+  </div>
+  <div class="nav-right">
+    <a class="nav-apply" href="#" onclick="handleApply(event)">Apply</a>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mob-link" onclick="goTo('home');closeMenu()">Home</button>
+  <button class="mob-link" onclick="goTo('about');closeMenu()">About</button>
+  <button class="mob-link" onclick="goTo('publications');closeMenu()">Publications</button>
+  <button class="mob-link" onclick="goTo('members');closeMenu()">Members</button>
+  <a class="mob-apply" href="#" onclick="handleApply(event);closeMenu()">Apply Now</a>
+</div>
+
+<!-- ═══════════════ HOME ═══════════════ -->
+<div class="page active" id="page-home">
+  <div class="home-hero">
+    <div class="hero-grid"></div>
+    <div class="hero-orbital"></div>
+    <span class="hero-psi">ψ</span>
+    <h1 class="hero-title">The <em>Psychology</em><br>Collective.</h1>
+    <p class="hero-sub">An international student-led community for real psychology research, cross-cultural collaboration, and meaningful academic work.</p>
+    <div class="hero-btns">
+      <button class="btn-solid" onclick="goTo('publications')">Our Publications</button>
+      <button class="btn-line" onclick="goTo('apply')">Apply &amp; Join</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-n">60+</span><span class="stat-l">Members</span></div>
+      <div class="stat"><span class="stat-n">30+</span><span class="stat-l">Countries</span></div>
+      <div class="stat"><span class="stat-n">2026</span><span class="stat-l">Founded</span></div>
+    </div>
+  </div>
+
+  <div class="home-featured">
+    <div class="featured-wrap">
+      <p class="featured-label">Featured Publication</p>
+      <div class="featured-inner">
+        <div class="issue-cover">
+          <div class="ic-grid"></div><div class="ic-glow"></div>
+          <div class="ic-top">
+            <span class="ic-org">The Psychology Collective</span>
+            <span class="ic-psi">ψ</span>
+          </div>
+          <div class="ic-bottom">
+            <span class="ic-num">01</span>
+            <div class="ic-line"></div>
+            <div class="ic-title">What Shapes Human Behaviour?</div>
+            <span class="ic-date">Issue 01 · 2026</span>
+          </div>
+        </div>
+        <div class="featured-main">
+          <div class="f-badge"><span class="f-dot"></span>Issue 01 · Drafts in Progress</div>
+          <span class="f-issue">The Psychology Collective Journal</span>
+          <h3 class="f-title"><em>What Shapes<br>Human Behaviour?</em></h3>
+          <p class="f-date">Expected — Summer 2026</p>
+          <p class="f-body">Our inaugural issue theme has been chosen: <em>What Shapes Human Behaviour?</em> — exploring the biological, psychological, and social forces behind how people think, feel, and act. Members from 30+ countries are now writing their drafts, each bringing a unique cultural and disciplinary lens to this theme.</p>
+          <div class="f-footer">
+            <span class="f-meta">68 contributors drafting · 30+ countries · Submissions open</span>
+            <button class="btn-solid" onclick="goTo('issue01')" style="font-size:.65rem;padding:8px 16px">View Issue →</button>
+          </div>
+        </div>
+        <div class="featured-sidebar">
+          <div class="fs-card">
+            <span class="fs-label">Coming Next</span>
+            <div class="fs-num">02</div>
+            <p class="fs-title">Issue No. 02</p>
+            <p class="fs-date">Expected Autumn 2026</p>
+          </div>
+          <div class="fs-card fs-stat">
+            <span class="fs-label">Publication Cycle</span>
+            <span class="fs-big">10wk</span>
+            <p class="fs-sub">From theme vote to public release — structured and consistent every cycle.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-cards">
+    <div class="home-card" onclick="goTo('about')"><div><span class="hc-n">01</span><h3 class="hc-title">About</h3><p class="hc-sub">What The Psychology Collective is, why it exists, and how it works.</p></div><span class="hc-arrow">Learn more →</span></div>
+    <div class="home-card" onclick="goTo('publications')"><div><span class="hc-n">02</span><h3 class="hc-title">Publications</h3><p class="hc-sub">Our quarterly academic journal — cross-cultural psychology research by students worldwide.</p></div><span class="hc-arrow">View archive →</span></div>
+    <div class="home-card" onclick="goTo('members')"><div><span class="hc-n">03</span><h3 class="hc-title">Members</h3><p class="hc-sub">60+ students from 30+ countries, each bringing a different perspective.</p></div><span class="hc-arrow">Meet the team →</span></div>
+    <div class="home-card" onclick="goTo('apply')"><div><span class="hc-n">04</span><h3 class="hc-title">Join</h3><p class="hc-sub">Open to high school students from any country and any psychology subfield.</p></div><span class="hc-arrow">Apply now →</span></div>
+  </div>
+
+  <div class="home-about">
+    <div>
+      <p class="ha-label">Why We Exist</p>
+      <h2 class="ha-h">Psychology without <em>borders.</em></h2>
+      <p class="ha-p">Most student academic communities study psychology from a single national perspective. We study it from forty. Criminal behavior, mental illness, patient experience, and human psychology all look fundamentally different depending on the legal system, healthcare infrastructure, cultural values, and historical context of the country you are in.</p>
+      <p class="ha-p" style="margin-top:.9rem">We believe studying these differences together — as students who actually live inside those different systems — produces richer, more honest, and more meaningful academic work.</p>
+    </div>
+    <div>
+      <div class="ha-pillars">
+        <div class="ha-pillar"><span class="ha-pn">01</span><div><p class="ha-ptitle">Research &amp; Publication</p><p class="ha-pbody">Original cross-cultural analyses published every ten weeks in our quarterly journal.</p></div></div>
+        <div class="ha-pillar"><span class="ha-pn">02</span><div><p class="ha-ptitle">Speaker Events</p><p class="ha-pbody">Working professionals from psychology, medicine, and law. Real conversations.</p></div></div>
+        <div class="ha-pillar"><span class="ha-pn">03</span><div><p class="ha-ptitle">Asynchronous Discussions</p><p class="ha-pbody">Biweekly cross-cultural discussions, open to all time zones and schedules.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-sf">
+    <p class="sec-label" style="max-width:1060px;margin:0 auto 1.5rem">All subfields welcome</p>
+    <div class="tags">
+      <span class="tag">Forensic Psychology</span><span class="tag">Clinical Psychology</span><span class="tag">Social Psychology</span><span class="tag">Neuropsychology</span><span class="tag">Developmental Psychology</span><span class="tag">Cognitive Psychology</span><span class="tag">Cross-Cultural Psychology</span><span class="tag">Health Psychology</span><span class="tag">Criminal Justice</span><span class="tag">Psychiatry</span><span class="tag">Behavioral Science</span><span class="tag">Psycholinguistics</span><span class="tag">Evolutionary Psychology</span><span class="tag">Positive Psychology</span><span class="tag">Environmental Psychology</span><span class="tag">&amp; more</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<div class="page" id="page-about">
+  <div class="page-top"><p class="page-label">About</p><h1 class="page-title">Built for students who want<br>to do <em>real</em> work.</h1></div>
+  <div class="about-grid">
+    <div>
+      <p class="about-p">The Psychology Collective is a structured, student-led academic community for students who are seriously interested in psychology. Through original research, long-term projects, discussions, and a quarterly journal, members explore psychological issues from cross-cultural and interdisciplinary perspectives.</p>
+      <p class="about-p">Every member contributes to published work, whether through research, writing, editing, design, event planning, or project development. Our fully online and asynchronous structure allows students from over 30 countries to participate meaningfully without mandatory live meetings.</p>
+      <div class="blockq"><p>Our goal is for The Psychology Collective to be recognized as more than an extracurricular club: a platform where students build credible academic experience, contribute to a global psychology community, and produce work they can confidently reference in future applications, portfolios, and CVs.</p></div>
+    </div>
+    <div class="facts">
+      <div class="fact"><span class="fact-n">10wk</span><p class="fact-t">Publication cycle — enough time to research and write without feeling rushed, while producing four issues per year.</p></div>
+      <div class="fact"><span class="fact-n">100%</span><p class="fact-t">Online and asynchronous — designed for global time zones. No mandatory video calls.</p></div>
+      <div class="fact"><span class="fact-n">4×</span><p class="fact-t">Journal issues per year, compiled from original analyses across dozens of countries.</p></div>
+      <div class="fact"><span class="fact-n">3</span><p class="fact-t">Divisions — Research, Media, and Events — each with roles suited to different skills.</p></div>
+    </div>
+  </div>
+  <div class="about-divs">
+    <p class="sec-label">Our Divisions</p>
+    <div class="pillars-grid">
+      <div class="pillar"><span class="p-n">Research</span><h3 class="p-title">Research Division</h3><p class="p-body">The academic heart. Members independently research a unique angle, write an original analysis, and publish alongside peers from around the world.</p><ul class="p-list"><li>800–1000 word cross-cultural analyses</li><li>Independent academic research</li><li>Peer-reviewed by Research Editors</li><li>Published in the quarterly journal</li></ul></div>
+      <div class="pillar"><span class="p-n">Media</span><h3 class="p-title">Media Division</h3><p class="p-body">The public face. Designs the journal, manages social media, and maintains the website — turning internal academic work into something anyone in the world can read.</p><ul class="p-list"><li>Journal layout &amp; design</li><li>Social media content</li><li>Website &amp; publication archive</li><li>Brand &amp; visual identity</li></ul></div>
+      <div class="pillar"><span class="p-n">Events</span><h3 class="p-title">Events Division</h3><p class="p-body">What makes the community feel alive. Biweekly asynchronous discussions and quarterly speaker events — the conversations members actually remember.</p><ul class="p-list"><li>Biweekly cross-cultural discussions</li><li>Quarterly speaker events</li><li>Discussion facilitation</li><li>Speaker outreach &amp; pipeline</li></ul></div>
+    </div>
+  </div>
+  <div class="about-cycle">
+    <p class="sec-label">The 10-Week Publication Cycle</p>
+    <div class="cycle-grid">
+      <div class="c-step"><span class="c-wk">Week 1</span><p class="c-title">Theme Vote</p><p class="c-body">Community votes on theme. Each member claims a unique angle.</p></div>
+      <div class="c-step"><span class="c-wk">Week 2–3</span><p class="c-title">Research</p><p class="c-body">Independent research using academic sources.</p></div>
+      <div class="c-step"><span class="c-wk">Week 4</span><p class="c-title">Write &amp; Review</p><p class="c-body">Members draft. Research Editors give written feedback.</p></div>
+      <div class="c-step"><span class="c-wk">Week 5–7</span><p class="c-title">Design</p><p class="c-body">Media Division lays out the full journal issue.</p></div>
+      <div class="c-step"><span class="c-wk">Week 9</span><p class="c-title">Publication</p><p class="c-body">PDF released publicly and archived on this site.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PUBLICATIONS ═══════════════ -->
+<div class="page" id="page-publications">
+  <div class="page-top"><p class="page-label">Archive</p><h1 class="page-title">Publications</h1></div>
+  <div class="pub-intro">
+    <p class="pub-intro-p">Each issue of The Psychology Collective Journal compiles original cross-cultural psychological analyses written by members from around the world — students studying the same themes from entirely different national, cultural, and legal contexts. Every issue is released as a free PDF and archived here permanently.</p>
+  </div>
+  <div class="pub-issues">
+    <!-- ISSUE 01 — click opens issue page -->
+    <div class="pub-card" onclick="goTo('issue01')">
+      <div class="pub-spine"><div><span class="pub-status s-progress">In Progress</span><span class="pub-spine-n">Issue No.</span><div class="pub-big-n">01</div></div></div>
+      <div class="pub-body">
+        <h3 class="pub-title"><em>What Shapes Human Behaviour?</em></h3>
+        <p class="pub-date">Expected — Summer 2026</p>
+        <p class="pub-desc">Our inaugural issue theme has been confirmed. Members are currently writing their drafts — exploring how biology, psychology, culture, and social environments shape the way people think, feel, and act. The full issue will be released as a PDF and permanently archived here on publication day.</p>
+        <p class="pub-detail">Drafts in progress · 68 contributors · 30+ countries</p>
+      </div>
+    </div>
+    <!-- ISSUE 02 -->
+    <div class="pub-card" style="cursor:default">
+      <div class="pub-spine"><div><span class="pub-status s-planned">Planned</span><span class="pub-spine-n">Issue No.</span><div class="pub-big-n">02</div></div></div>
+      <div class="pub-body">
+        <h3 class="pub-title"><em>Theme to be announced</em></h3>
+        <p class="pub-date">Expected — Autumn 2026</p>
+        <p class="pub-desc">Our second issue will follow the same structure — a community-voted theme, original analyses from members worldwide, and a full publication available to read and cite freely.</p>
+        <p class="pub-detail">Planning begins September 2026</p>
+      </div>
+    </div>
+    <!--
+    ══ HOW TO ADD FUTURE ISSUES ══
+    1. Copy a pub-card div above
+    2. Update issue number, status class, title, date, description
+    3. Add onclick="goTo('issue02')" to the card
+    4. Duplicate the issue01 page section below and rename to page-issue02
+    5. Update all content inside that new page
+    -->
+  </div>
+  <div class="pub-note">
+    <p class="sec-label">About The Journal</p>
+    <p>Each analysis is 800–1000 words, independently researched, peer-reviewed by Research Editors, and written through a cross-cultural lens. All issues are free to read, download, and cite. Members may list published analyses on university applications, personal statements, and academic CVs.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ ISSUE 01 PAGE ═══════════════ -->
+<div class="page" id="page-issue01">
+  <div class="issue-hero">
+    <div class="issue-hero-inner">
+      <div>
+        <button class="ih-back" onclick="goTo('publications')">← Back to Archive</button>
+        <span class="ih-label">Issue No. 01 · The Psychology Collective Journal</span>
+        <h1 class="ih-title"><em>What Shapes<br>Human Behaviour?</em></h1>
+        <div class="ih-meta">
+          <span>Expected Summer 2026</span>
+          <span>68 Contributors</span>
+          <span>30+ Countries</span>
+          <span>Drafts in Progress</span>
+        </div>
+        <div class="ih-btns">
+          <button class="btn-line" style="opacity:.5;cursor:not-allowed">PDF Available on Publication</button>
+        </div>
+      </div>
+      <div class="ih-cover">
+        <div class="ih-cover-grid"></div>
+        <div class="ih-ct"><span class="ih-cover-org">The Psychology Collective</span><span class="ih-cover-psi">ψ</span></div>
+        <div class="ih-cb"><span class="ih-cover-num">01</span><div class="ih-cover-line"></div><div class="ih-cover-title">What Shapes Human Behaviour?</div><span class="ih-cover-date">Issue 01 · 2026</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="issue-section">
+    <p class="sec-label">Founder's Note</p>
+    <div class="founders-note">
+      <p class="fn-body">When I first created The Psychology Collective, I wanted it to be more than a place where students shared a common interest in psychology. I wanted it to become a space where students could think seriously, write carefully, and contribute to genuine academic discussions about the human mind and behaviour.</p>
+      <p class="fn-body" style="margin-top:.8rem">Our first issue, <em>What Shapes Human Behaviour?</em>, reflects that intention. Human behaviour is never the product of a single cause. The way people think, feel, and act emerges from a complex interplay of biology, psychology, culture, upbringing, environment, and social systems. Any decision, emotion, belief, or action can only be fully understood when we examine the many forces that shape it.</p>
+      <p class="fn-body" style="margin-top:.8rem">This theme was chosen because it gives our contributors the freedom to approach psychology from many different angles. Some examine the brain, hormones, or personality. Others write about culture, morality, childhood, social influence, mental health, or criminal behaviour. Together, these perspectives demonstrate that psychology is not a single field with a single answer — it is a discipline that asks us to look deeper, question our assumptions, and understand people with greater nuance.</p>
+      <p class="fn-body" style="margin-top:.8rem">As our first publication, this issue also marks the beginning of The Psychology Collective as a global student-led academic community. With members from over 30 countries, we hope to build a platform where students learn from one another's perspectives and produce work that reflects real curiosity, careful research, and genuine effort.</p>
+      <p class="fn-body" style="margin-top:.8rem">I am proud of everyone who contributed to this issue. Whether through research, writing, editing, design, or coordination, each member helped create something larger than any individual project. This journal is not simply a collection of essays — it is evidence of what students can accomplish when they are given the space to explore ideas seriously and collaboratively.</p>
+      <p class="fn-body" style="margin-top:.8rem">I hope this first issue invites readers to think more carefully about the forces that shape human behaviour — not only in others, but in themselves.</p>
+      <div class="fn-sig"><span class="fn-name">Jeeyoo Kim</span>Founder, The Psychology Collective · Issue 01 · 2026</div>
+    </div>
+  </div>
+
+  <div class="issue-section">
+    <p class="sec-label">Issue Theme</p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:2.5rem;max-width:680px">
+      <div class="f-badge" style="margin-bottom:1.2rem"><span class="f-dot"></span>Theme confirmed · Drafts in progress</div>
+      <h2 style="font-family:var(--serif);font-size:1.6rem;font-weight:300;color:var(--text);margin-bottom:.8rem"><em>What Shapes Human Behaviour?</em></h2>
+      <p style="font-size:.9rem;font-weight:300;color:var(--text2);line-height:1.82;margin-bottom:.9rem">This theme explores the wide range of factors that influence how people think, feel, and act. Human behaviour is shaped by a complex interaction between biological processes, psychological mechanisms, and social environments. Contributors may examine how internal factors such as brain function, hormones, and personality interact with external influences like culture, upbringing, and societal systems.</p>
+      <p style="font-size:.9rem;font-weight:300;color:var(--text2);line-height:1.82">This theme also allows for exploration of behaviour in different contexts — from everyday decision-making to more complex issues such as crime, morality, and social influence. Writers can approach it from multiple perspectives, including clinical, cognitive, social, and biological psychology, making it one of the most flexible and inclusive themes for cross-cultural academic work.</p>
+      <p style="font-size:.82rem;font-weight:500;color:var(--accent2);margin-top:1.2rem;letter-spacing:.02em">Currently: members are writing their drafts.</p>
+    </div>
+  </div>
+
+  <div class="issue-section">
+    <p class="sec-label">Contributors</p>
+    <div class="contrib-grid">
+      <div class="contrib-card"><div class="cc-init">JK</div><p class="cc-name">Jeeyoo Kim</p><p class="cc-country">South Korea</p><p class="cc-field">President</p></div>
+      <div class="contrib-card"><div class="cc-init">IL</div><p class="cc-name">Irene Lee</p><p class="cc-country">South Korea</p><p class="cc-field">Vice President</p></div>
+      <div class="contrib-card"><div class="cc-init">NA</div><p class="cc-name">Nannapat Aphipatworachot</p><p class="cc-country">Thailand</p><p class="cc-field">Research Lead</p></div>
+      <div class="contrib-card"><div class="cc-init">SF</div><p class="cc-name">Safina</p><p class="cc-country">Kazakhstan &amp; Qatar</p><p class="cc-field">Events Lead</p></div>
+      <div class="contrib-card"><div class="cc-init">NI</div><p class="cc-name">Nicole</p><p class="cc-country">Philippines</p><p class="cc-field">Media Lead</p></div>
+      <div class="contrib-card"><div class="cc-init">RA</div><p class="cc-name">Rebecca Anzarut</p><p class="cc-country">Mexico</p><p class="cc-field">Research Editor</p></div>
+      <div class="contrib-card"><div class="cc-init">YB</div><p class="cc-name">Yana Balan</p><p class="cc-country">Russian Federation</p><p class="cc-field">Research Editor</p></div>
+      <div class="contrib-card"><div class="cc-init">MY</div><p class="cc-name">Mathew Y.</p><p class="cc-country">Canada</p><p class="cc-field">Publication Manager</p></div>
+      <div class="contrib-card"><div class="cc-init">MJ</div><p class="cc-name">Maria Júlia Reis</p><p class="cc-country">Brazil</p><p class="cc-field">Social Media Manager</p></div>
+      <div class="contrib-card"><div class="cc-init">EA</div><p class="cc-name">Eaint Yati Aung</p><p class="cc-country">Myanmar</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">VT</div><p class="cc-name">Victoria Terech</p><p class="cc-country">United States</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CG</div><p class="cc-name">Camila Guerra Piedrasanta</p><p class="cc-country">Guatemala</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AB</div><p class="cc-name">Akihira Sofia Barruga</p><p class="cc-country">Philippines</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">ST</div><p class="cc-name">Shyngys Tolesh</p><p class="cc-country">Kazakhstan</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">MU</div><p class="cc-name">Muniba</p><p class="cc-country">Pakistan</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SD</div><p class="cc-name">Sisanda Dlamini</p><p class="cc-country">South Africa</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">KM</div><p class="cc-name">Kim Mura</p><p class="cc-country">Burma</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">BG</div><p class="cc-name">Bilge Gülboy</p><p class="cc-country">Türkiye</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NS</div><p class="cc-name">Noor Shahid</p><p class="cc-country">Pakistan</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">DK</div><p class="cc-name">Diana Kim</p><p class="cc-country">Russia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CQ</div><p class="cc-name">Caitlin Querimit</p><p class="cc-country">Canada</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JA</div><p class="cc-name">Jaier</p><p class="cc-country">Canada</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">VJ</div><p class="cc-name">Victoria Jawabry</p><p class="cc-country">Palestine</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">LR</div><p class="cc-name">Leah Rowe</p><p class="cc-country">Canada</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">VL</div><p class="cc-name">Valeria Leon</p><p class="cc-country">United States</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">DS</div><p class="cc-name">Daneliya Syzdykova</p><p class="cc-country">Malaysia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">PS</div><p class="cc-name">Panhaboth S.</p><p class="cc-country">Australia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AG</div><p class="cc-name">Anano Gordeziani</p><p class="cc-country">Georgia</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SK</div><p class="cc-name">Success Kole</p><p class="cc-country">Spain</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SS</div><p class="cc-name">Serena Salhab</p><p class="cc-country">Saudi Arabia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JE</div><p class="cc-name">Jenny</p><p class="cc-country">Germany</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">XL</div><p class="cc-name">Ximena Lazo Melo</p><p class="cc-country">Peru</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AB</div><p class="cc-name">Amaya Bhardwaj</p><p class="cc-country">India</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NZ</div><p class="cc-name">Nure Zannat Tanha Chowdhury</p><p class="cc-country">USA</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">PT</div><p class="cc-name">Pi Ti Khin</p><p class="cc-country">Myanmar</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JL</div><p class="cc-name">Julia Luo</p><p class="cc-country">China</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CZ</div><p class="cc-name">Chloe Z'ezi Palmira</p><p class="cc-country">Rwanda</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AN</div><p class="cc-name">Amin N. Amin</p><p class="cc-country">Iraq</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HO</div><p class="cc-name">Hope</p><p class="cc-country">South Africa</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">FB</div><p class="cc-name">Fatima Badran</p><p class="cc-country">Lebanon</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">RT</div><p class="cc-name">Reyna Rexel C. Tulop</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">QZ</div><p class="cc-name">Quentin Zhu</p><p class="cc-country">Singapore</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SN</div><p class="cc-name">Sophie Nguyen</p><p class="cc-country">Australia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NN</div><p class="cc-name">Nene Nutcha Prajaksilpthai</p><p class="cc-country">United States</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">VK</div><p class="cc-name">Vu Tran Khanh Ly</p><p class="cc-country">South Korea</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AL</div><p class="cc-name">Angel Q. Llagas</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CP</div><p class="cc-name">Citlaly Gomez Pedro</p><p class="cc-country">United States</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">EF</div><p class="cc-name">Erin R. Fernandez</p><p class="cc-country">Philippines</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">LH</div><p class="cc-name">Luciana Merino Hervas</p><p class="cc-country">Ecuador</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">KE</div><p class="cc-name">Khadija elhazibi</p><p class="cc-country">Morocco</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">OT</div><p class="cc-name">Özge Taşkömür</p><p class="cc-country">Türkiye</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SKa</div><p class="cc-name">Sofiia Kasianova</p><p class="cc-country">Russia</p><p class="cc-field">Media &amp; Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">DSh</div><p class="cc-name">Dylan Shackle</p><p class="cc-country">Canada</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">YP</div><p class="cc-name">Yeonwoo Park</p><p class="cc-country">South Korea</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JHa</div><p class="cc-name">Jocelyn Harry</p><p class="cc-country">Indonesia</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">BT</div><p class="cc-name">Beatriz Rue Tluang</p><p class="cc-country">Myanmar</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AMA</div><p class="cc-name">Alyssa Milajandra P. Abapo</p><p class="cc-country">United Arab Emirates</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">DPe</div><p class="cc-name">Daria Perova</p><p class="cc-country">Russia</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SOF</div><p class="cc-name">Sofia</p><p class="cc-country">Russia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">ZO</div><p class="cc-name">Zoha</p><p class="cc-country">India</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SJP</div><p class="cc-name">Sheika Jamirah M. Padasay</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">MFr</div><p class="cc-name">Maya Françoise</p><p class="cc-country">France</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">RdA</div><p class="cc-name">Rebecca de Almeida Amorim</p><p class="cc-country">Brazil</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">LAh</div><p class="cc-name">Laila Ahmed</p><p class="cc-country">Egypt</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AMY</div><p class="cc-name">Abeer Mohammad Yunus</p><p class="cc-country">UAE</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HEN</div><p class="cc-name">Henry</p><p class="cc-country">Myanmar</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SHa</div><p class="cc-name">Sarah Harvey</p><p class="cc-country">Australia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JM</div><p class="cc-name">Je-ishe Masamba</p><p class="cc-country">Zimbabwe</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CL</div><p class="cc-name">Cassy L</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HB</div><p class="cc-name">Hannah Bataller</p><p class="cc-country">Canada</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NIC</div><p class="cc-name">Nicole</p><p class="cc-country">Singapore</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">TK</div><p class="cc-name">Tenzing Kitshok</p><p class="cc-country">Bhutan</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">TXD</div><p class="cc-name">Titova Xenia Dmitrievna</p><p class="cc-country">Russia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HS</div><p class="cc-name">Huber Sophia</p><p class="cc-country">Austria</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">XET</div><p class="cc-name">Xetazia</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SYR</div><p class="cc-name">Stefanie Nicole Yenko Reyes</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JTA</div><p class="cc-name">Jaira Tabungcay Ambos</p><p class="cc-country">Philippines</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NP</div><p class="cc-name">Neha Prawin</p><p class="cc-country">Nepal</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HYM</div><p class="cc-name">Hsu Yamone Minn</p><p class="cc-country">Myanmar</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NAC</div><p class="cc-name">Nycole Andrade de Campos Cavalcante</p><p class="cc-country">Brazil</p><p class="cc-field">Research Division</p></div>
+
+    </div>
+  </div>
+
+  <div class="issue-section">
+    <p class="sec-label">Articles</p>
+    <div class="article-list">
+      <div class="article-row"><span class="ar-num">01</span><div class="ar-main"><p class="ar-title"><em>The Neurobiological Cascade: How Sensory-Motor Dysregulation and Social Masking Shape Complex Trauma and Personality in Neurodivergent Individuals</em></p><p class="ar-meta">Shyngys Tolesh · Kazakhstan · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">02</span><div class="ar-main"><p class="ar-title"><em>The Propensity for Crime and Brain Development in People from Disadvantaged Backgrounds in Areas Where Criminal Activity Is Prevalent</em></p><p class="ar-meta">Bilge Gülboy · Türkiye · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">03</span><div class="ar-main"><p class="ar-title"><em>How Parenting Styles Affect a Child's Personality</em></p><p class="ar-meta">Serena Salhab · Saudi Arabia · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">04</span><div class="ar-main"><p class="ar-title"><em>How Environmental and Social Changes Create Behavioural Adaptation Through Access to Opportunities</em></p><p class="ar-meta">Amaya Bhardwaj · India · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">05</span><div class="ar-main"><p class="ar-title"><em>How the Presence of Others Impacts an Individual's Decisions and Behaviours</em></p><p class="ar-meta">Julia Luo · China · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">06</span><div class="ar-main"><p class="ar-title"><em>The Relationship Between Self-Identity and Long-Term Behavioural Change</em></p><p class="ar-meta">Diana Kim · Russia · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">07</span><div class="ar-main"><p class="ar-title"><em>Cultural Differences in Textile Symbolism: How Traditional Blankets Reflect Societal Values and Identity</em></p><p class="ar-meta">Ximena Lazo Melo · Peru · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">08</span><div class="ar-main"><p class="ar-title"><em>Sudden Emotional Breakdown During a Positive Event</em></p><p class="ar-meta">Khadija elhazibi · Morocco · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">09</span><div class="ar-main"><p class="ar-title"><em>How Jealousy Can Impact the Course of an Individual's Life</em></p><p class="ar-meta">Sophie Nguyen · Australia · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">10</span><div class="ar-main"><p class="ar-title"><em>How Repeated Minor Stressors Shape Behaviour Over Time</em></p><p class="ar-meta">Chloe Z'ezi Palmira · Rwanda · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">11</span><div class="ar-main"><p class="ar-title"><em>The Impact of Childhood Trauma on Adult Decision-Making</em></p><p class="ar-meta">Success Kole · Spain · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">12</span><div class="ar-main"><p class="ar-title"><em>How Grey Urban Landscapes Shape Mental Health and Social Behaviour: A Case for Colour as a Behavioural Intervention</em></p><p class="ar-meta">Sofiia Kasianova · Russia · Media &amp; Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">13</span><div class="ar-main"><p class="ar-title"><em>Neuroplasticity After a Traumatic Brain Injury</em></p><p class="ar-meta">Victoria Terech · United States · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">14</span><div class="ar-main"><p class="ar-title"><em>The Relationship Between Childhood Adversity and Anxiety: The Mediating Role of Emotional Regulation Difficulties Among Working Adults</em></p><p class="ar-meta">Reyna Rexel C. Tulop · Philippines · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">15</span><div class="ar-main"><p class="ar-title"><em>The Psychological Impact of Social Media on Teenage Identity, Self-Worth, and Behaviour</em></p><p class="ar-meta">Laila Khairy · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">16</span><div class="ar-main"><p class="ar-title"><em>The Psychological Consequences of Parentification in Early Childhood and Adolescence</em></p><p class="ar-meta">Sarah Harvey · Australia · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">17</span><div class="ar-main"><p class="ar-title"><em>How Isolation Contributes to Cognitive Decline and Risks of Brain Disease: Philippines, The Loneliest Youths in Southeast Asia</em></p><p class="ar-meta">Cassy L · Philippines · Research Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+      <div class="article-row"><span class="ar-num">18</span><div class="ar-main"><p class="ar-title"><em>The Role of Water (Rivers, Fountains, Reflective Surfaces) in Reducing Anxiety and Promoting Aesthetic Pleasure</em></p><p class="ar-meta">Daria Perova · Russia · Media Division</p></div><span class="ar-status pill-progress">In Progress</span></div>
+    </div>
+  </div>
+
+  <div class="issue-section">
+    <p class="sec-label">Cross-Cultural Perspectives</p>
+    <div class="insight-grid">
+      <div class="insight-card" style="display:flex;align-items:center;justify-content:center;min-height:100px"><p style="font-family:var(--serif);font-style:italic;font-size:.88rem;color:var(--text3);text-align:center;line-height:1.65">In progress — perspectives will be added as drafts are completed.</p></div>
+      <div class="insight-card" style="display:flex;align-items:center;justify-content:center;min-height:100px"><p style="font-family:var(--serif);font-style:italic;font-size:.88rem;color:var(--text3);text-align:center;line-height:1.65">In progress — perspectives will be added as drafts are completed.</p></div>
+      <div class="insight-card" style="display:flex;align-items:center;justify-content:center;min-height:100px"><p style="font-family:var(--serif);font-style:italic;font-size:.88rem;color:var(--text3);text-align:center;line-height:1.65">In progress — perspectives will be added as drafts are completed.</p></div>
+    </div>
+  </div>
+
+  <div class="issue-section" style="text-align:center">
+    <p style="font-family:var(--serif);font-size:1.3rem;font-weight:300;font-style:italic;color:var(--text);margin-bottom:1rem">The full issue will be available here on publication day.</p>
+    <p style="font-size:.85rem;color:var(--text3);margin-bottom:2rem">Expected Summer 2026 · Free to read, download, and cite</p>
+    <button class="btn-line" style="opacity:.5;cursor:not-allowed;margin-right:.8rem">Download PDF</button>
+    <button class="btn-solid" onclick="goTo('publications')">Back to Archive</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MEMBERS ═══════════════ -->
+<div class="page" id="page-members">
+  <div class="page-top"><p class="page-label">Cohort 1 · 2026</p><h1 class="page-title">Our Members</h1></div>
+  <div class="members-intro">
+    <div><p class="mi-p">Our first cohort brings together 60+ students from more than 30 countries — each contributing a different national, legal, cultural, and clinical perspective to our shared research themes. Members come from every psychology subfield and every corner of the world.</p></div>
+    <div><div class="mi-note"><strong>How we work</strong>The Psychology Collective is entirely student-run and asynchronous. Members collaborate across time zones with no mandatory live meetings. The diversity of our community is our greatest academic asset.</div></div>
+  </div>
+  <div class="members-grid-wrap">
+    <p class="sec-label">Member Directory</p>
+    <div class="m-grid">
+      <div class="contrib-card"><div class="cc-init">JK</div><p class="cc-name">Jeeyoo Kim</p><p class="cc-country">South Korea</p><p class="cc-field">President</p></div>
+      <div class="contrib-card"><div class="cc-init">IL</div><p class="cc-name">Irene Lee</p><p class="cc-country">South Korea</p><p class="cc-field">Vice President</p></div>
+      <div class="contrib-card"><div class="cc-init">NA</div><p class="cc-name">Nannapat Aphipatworachot</p><p class="cc-country">Thailand</p><p class="cc-field">Research Lead</p></div>
+      <div class="contrib-card"><div class="cc-init">SF</div><p class="cc-name">Safina</p><p class="cc-country">Kazakhstan & Qatar</p><p class="cc-field">Events Lead</p></div>
+      <div class="contrib-card"><div class="cc-init">NI</div><p class="cc-name">Nicole</p><p class="cc-country">Philippines</p><p class="cc-field">Media Lead</p></div>
+      <div class="contrib-card"><div class="cc-init">RA</div><p class="cc-name">Rebecca Anzarut</p><p class="cc-country">Mexico</p><p class="cc-field">Research Editor</p></div>
+      <div class="contrib-card"><div class="cc-init">YB</div><p class="cc-name">Yana Balan</p><p class="cc-country">Russian Federation</p><p class="cc-field">Research Editor</p></div>
+      <div class="contrib-card"><div class="cc-init">MY</div><p class="cc-name">Mathew Y.</p><p class="cc-country">Canada</p><p class="cc-field">Publication Manager</p></div>
+      <div class="contrib-card"><div class="cc-init">MJ</div><p class="cc-name">Maria Júlia Reis</p><p class="cc-country">Brazil</p><p class="cc-field">Social Media Manager</p></div>
+      <div class="contrib-card"><div class="cc-init">EA</div><p class="cc-name">Eaint Yati Aung</p><p class="cc-country">Myanmar</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">VT</div><p class="cc-name">Victoria Terech</p><p class="cc-country">United States</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CG</div><p class="cc-name">Camila Guerra Piedrasanta</p><p class="cc-country">Guatemala</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AB</div><p class="cc-name">Akihira Sofia Barruga</p><p class="cc-country">Philippines</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">ST</div><p class="cc-name">Shyngys Tolesh</p><p class="cc-country">Kazakhstan</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">MU</div><p class="cc-name">Muniba</p><p class="cc-country">Pakistan</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SD</div><p class="cc-name">Sisanda Dlamini</p><p class="cc-country">South Africa</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">KM</div><p class="cc-name">Kim Mura</p><p class="cc-country">Burma</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">BG</div><p class="cc-name">Bilge Gülboy</p><p class="cc-country">Türkiye</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NS</div><p class="cc-name">Noor Shahid</p><p class="cc-country">Pakistan</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">DK</div><p class="cc-name">Diana Kim</p><p class="cc-country">Russia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CQ</div><p class="cc-name">Caitlin Querimit</p><p class="cc-country">Canada</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JA</div><p class="cc-name">Jaier</p><p class="cc-country">Canada</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">VJ</div><p class="cc-name">Victoria Jawabry</p><p class="cc-country">Palestine</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">LR</div><p class="cc-name">Leah Rowe</p><p class="cc-country">Canada</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">VL</div><p class="cc-name">Valeria Leon</p><p class="cc-country">United States</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">DS</div><p class="cc-name">Daneliya Syzdykova</p><p class="cc-country">Malaysia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">PS</div><p class="cc-name">Panhaboth S.</p><p class="cc-country">Australia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AG</div><p class="cc-name">Anano Gordeziani</p><p class="cc-country">Georgia</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SK</div><p class="cc-name">Success Kole</p><p class="cc-country">Spain</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SS</div><p class="cc-name">Serena Salhab</p><p class="cc-country">Saudi Arabia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JE</div><p class="cc-name">Jenny</p><p class="cc-country">Germany</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">XL</div><p class="cc-name">Ximena Lazo Melo</p><p class="cc-country">Peru</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AB</div><p class="cc-name">Amaya Bhardwaj</p><p class="cc-country">India</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NZ</div><p class="cc-name">Nure Zannat Tanha Chowdhury</p><p class="cc-country">USA</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">PT</div><p class="cc-name">Pi Ti Khin</p><p class="cc-country">Myanmar</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JL</div><p class="cc-name">Julia Luo</p><p class="cc-country">China</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CZ</div><p class="cc-name">Chloe Z'ezi Palmira</p><p class="cc-country">Rwanda</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AN</div><p class="cc-name">Amin N. Amin</p><p class="cc-country">Iraq</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HO</div><p class="cc-name">Hope</p><p class="cc-country">South Africa</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">FB</div><p class="cc-name">Fatima Badran</p><p class="cc-country">Lebanon</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">RT</div><p class="cc-name">Reyna Rexel C. Tulop</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">QZ</div><p class="cc-name">Quentin Zhu</p><p class="cc-country">Singapore</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SN</div><p class="cc-name">Sophie Nguyen</p><p class="cc-country">Australia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NN</div><p class="cc-name">Nene Nutcha Prajaksilpthai</p><p class="cc-country">United States</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">VK</div><p class="cc-name">Vu Tran Khanh Ly</p><p class="cc-country">South Korea</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AL</div><p class="cc-name">Angel Q. Llagas</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CP</div><p class="cc-name">Citlaly Gomez Pedro</p><p class="cc-country">United States</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">EF</div><p class="cc-name">Erin R. Fernandez</p><p class="cc-country">Philippines</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">LH</div><p class="cc-name">Luciana Merino Hervas</p><p class="cc-country">Ecuador</p><p class="cc-field">Events Division</p></div>
+      <div class="contrib-card"><div class="cc-init">KE</div><p class="cc-name">Khadija elhazibi</p><p class="cc-country">Morocco</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">OT</div><p class="cc-name">Özge Taşkömür</p><p class="cc-country">Türkiye</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SKa</div><p class="cc-name">Sofiia Kasianova</p><p class="cc-country">Russia</p><p class="cc-field">Media &amp; Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">DSh</div><p class="cc-name">Dylan Shackle</p><p class="cc-country">Canada</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">YP</div><p class="cc-name">Yeonwoo Park</p><p class="cc-country">South Korea</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JHa</div><p class="cc-name">Jocelyn Harry</p><p class="cc-country">Indonesia</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">BT</div><p class="cc-name">Beatriz Rue Tluang</p><p class="cc-country">Myanmar</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AMA</div><p class="cc-name">Alyssa Milajandra P. Abapo</p><p class="cc-country">United Arab Emirates</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">DPe</div><p class="cc-name">Daria Perova</p><p class="cc-country">Russia</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SOF</div><p class="cc-name">Sofia</p><p class="cc-country">Russia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">ZO</div><p class="cc-name">Zoha</p><p class="cc-country">India</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SJP</div><p class="cc-name">Sheika Jamirah M. Padasay</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">MFr</div><p class="cc-name">Maya Françoise</p><p class="cc-country">France</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">RdA</div><p class="cc-name">Rebecca de Almeida Amorim</p><p class="cc-country">Brazil</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">LAh</div><p class="cc-name">Laila Ahmed</p><p class="cc-country">Egypt</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">AMY</div><p class="cc-name">Abeer Mohammad Yunus</p><p class="cc-country">UAE</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HEN</div><p class="cc-name">Henry</p><p class="cc-country">Myanmar</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SHa</div><p class="cc-name">Sarah Harvey</p><p class="cc-country">Australia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JM</div><p class="cc-name">Je-ishe Masamba</p><p class="cc-country">Zimbabwe</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">CL</div><p class="cc-name">Cassy L</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HB</div><p class="cc-name">Hannah Bataller</p><p class="cc-country">Canada</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NIC</div><p class="cc-name">Nicole</p><p class="cc-country">Singapore</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">TK</div><p class="cc-name">Tenzing Kitshok</p><p class="cc-country">Bhutan</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">TXD</div><p class="cc-name">Titova Xenia Dmitrievna</p><p class="cc-country">Russia</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HS</div><p class="cc-name">Huber Sophia</p><p class="cc-country">Austria</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">XET</div><p class="cc-name">Xetazia</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">SYR</div><p class="cc-name">Stefanie Nicole Yenko Reyes</p><p class="cc-country">Philippines</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">JTA</div><p class="cc-name">Jaira Tabungcay Ambos</p><p class="cc-country">Philippines</p><p class="cc-field">Media Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NP</div><p class="cc-name">Neha Prawin</p><p class="cc-country">Nepal</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">HYM</div><p class="cc-name">Hsu Yamone Minn</p><p class="cc-country">Myanmar</p><p class="cc-field">Research Division</p></div>
+      <div class="contrib-card"><div class="cc-init">NAC</div><p class="cc-name">Nycole Andrade de Campos Cavalcante</p><p class="cc-country">Brazil</p><p class="cc-field">Research Division</p></div>
+
+    </div>
+  </div>
+</div>
+<div class="page" id="page-apply">
+  <div class="apply-hero">
+    <span class="apply-psi">ψ</span>
+    <h1 class="apply-h">Come ready<br>to <em>contribute.</em></h1>
+    <p class="apply-sub">The Psychology Collective welcomes ambitious high school students from any country and any subfield. We are not looking for perfect grades — we are looking for students who are genuinely curious and ready to engage seriously with psychology across cultures.</p>
+    <a class="apply-btn" href="#" onclick="handleApply(event)">Apply Now</a>
+    <p class="apply-note">Applications reviewed on a rolling basis · Fully online · Asynchronous</p>
+  </div>
+  <div class="apply-body">
+    <div>
+      <h2 class="apply-h2">Who we're looking for</h2>
+      <p class="apply-p">Open to high school students from anywhere in the world with an interest in psychology — any subfield, any academic background, any country. We do not require prior research experience.</p>
+      <p class="apply-p">What we do require is genuine curiosity, a willingness to engage with psychology across cultural contexts, and the commitment to complete your work reliably and on time.</p>
+    </div>
+    <div>
+      <h2 class="apply-h2">What to expect</h2>
+      <ul class="apply-list">
+        <li>One original research analysis per 10-week cycle</li>
+        <li>Participation in biweekly asynchronous discussions</li>
+        <li>Collaboration with 60+ members across 30+ countries</li>
+        <li>Your work published in a publicly archived journal</li>
+        <li>A publication you can cite on university applications</li>
+        <li>No mandatory live meetings — fully asynchronous</li>
+      </ul>
+    </div>
+  </div>
+  <div class="apply-faq">
+    <p class="sec-label">Frequently Asked Questions</p>
+    <div class="faq-item"><p class="faq-q">Do I need prior research experience?</p><p class="faq-a">No. We will guide you through the research and writing process. What matters is that you engage genuinely with your topic and are willing to learn.</p></div>
+    <div class="faq-item"><p class="faq-q">How much time does membership require?</p><p class="faq-a">Roughly 3–5 hours per week during active writing periods, and less during discussion-only weeks. All deadlines are designed with global time zones in mind.</p></div>
+    <div class="faq-item"><p class="faq-q">Can I join if English is not my first language?</p><p class="faq-a">Yes. Research Editors will help non-native English speakers with language clarity. The important thing is the quality of your thinking and research — not perfect English.</p></div>
+    <div class="faq-item"><p class="faq-q">Which division will I be in?</p><p class="faq-a">You can indicate a preference when you apply. Placement is based on your skills, interests, and what the community needs at the time of your application.</p></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand"><div class="foot-mark">ψ</div><span class="foot-name">The Psychology Collective · Est. 2026</span></div>
+    <div class="foot-links">
+      <a onclick="goTo('about')">About</a>
+      <a onclick="goTo('publications')">Publications</a>
+      <a onclick="goTo('members')">Members</a>
+      <a onclick="goTo('apply')">Apply</a>
+      <!-- Replace # with your real social media URLs -->
+      <a id="foot-instagram" href="#" target="_blank" rel="noopener">Instagram</a>
+      <a id="foot-tiktok" href="#" target="_blank" rel="noopener">TikTok</a>
+    </div>
+  </div>
+  <p class="foot-copy">© 2026 The Psychology Collective. A student-run initiative. All analyses published with member permission.</p>
+</footer>
+
+<script>
+/* ════════════════════════════════════════
+   CONFIGURATION — edit these three lines
+════════════════════════════════════════ */
+var APPLY_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLSfHkKZMQ7IfKgVYrtXOPLUdQpBHnajkDQSGFvTOjONW5hnUIg/viewform?usp=header';
+var INSTAGRAM  = '#';   // paste your Instagram URL between the quotes
+var TIKTOK     = '#';   // paste your TikTok URL between the quotes
+
+/* Apply button handler */
+function handleApply(e){
+  e.preventDefault();
+  if(APPLY_LINK==='#'){
+    alert('Application form coming soon — check back shortly!');
+  } else {
+    window.open(APPLY_LINK,'_blank');
+  }
+}
+
+/* Social links auto-populated */
+window.addEventListener('DOMContentLoaded',function(){
+  if(INSTAGRAM!=='#'&&document.getElementById('foot-instagram'))
+    document.getElementById('foot-instagram').href=INSTAGRAM;
+  if(TIKTOK!=='#'&&document.getElementById('foot-tiktok'))
+    document.getElementById('foot-tiktok').href=TIKTOK;
+});
+
+/* Page navigation */
+function goTo(p){
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active')});
+  var el=document.getElementById('page-'+p);
+  if(el)el.classList.add('active');
+  document.querySelectorAll('[data-page]').forEach(function(x){x.classList.remove('active')});
+  document.querySelectorAll('[data-page="'+p+'"]').forEach(function(x){x.classList.add('active')});
+  window.scrollTo({top:0,behavior:'smooth'});
+  closeMenu();
+}
+
+/* Mobile menu */
+function toggleMenu(){
+  var m=document.getElementById('mobile-menu');
+  var b=document.getElementById('hamburger');
+  if(m.classList.contains('open')){closeMenu();}
+  else{m.classList.add('open');b.classList.add('open');document.body.style.overflow='hidden';}
+}
+function closeMenu(){
+  var m=document.getElementById('mobile-menu');
+  var b=document.getElementById('hamburger');
+  if(m){m.classList.remove('open');}
+  if(b){b.classList.remove('open');}
+  document.body.style.overflow='';
+}
+</script>
+</body>
+</html>
